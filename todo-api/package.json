@@ -1,0 +1,16 @@
+{
+  "name": "todo-api",
+  "version": "1.0.0",
+  "description": "REST API for Todo-App with MySQL",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Samuel Hess",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "knex": "^0.20.1",
+    "mysql2": "^2.0.0"
+  }
+}
