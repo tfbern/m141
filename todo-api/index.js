@@ -17,20 +17,22 @@ app.get('/api', (req, res) => {
 app.get('/api/todo', async (req, res) =>{
     let results = await knex('tasks')
     res.json(results)
+    // console.log(results)
 })
 // create
 app.post('/api/todo', async (req, res) =>{
     let results = await knex('tasks')
                         .insert({text: req.body.text})
     res.json(results)
+    console.log("Creating record with values " + JSON.stringify(req.body))
 })
 // update
 app.put('/api/todo/:id', async (req, res) =>{
     let results = await knex('tasks')
-                        .update({done: req.body.done})
+                        .update({text: req.body.text, done: req.body.done})
                         .where('id', req.params.id)
     res.json(results)
-    // console.log(req.params.id, req.body.done)
+    console.log("Updating record " + req.params.id + " to " + JSON.stringify(req.body))
 })
 // delete
 app.delete('/api/todo/:id', async (req, res) =>{
@@ -38,5 +40,6 @@ app.delete('/api/todo/:id', async (req, res) =>{
                         .where('id', req.params.id)
                         .del()
     res.json(results)
+    console.log("Deleting record ID " + req.params.id)
 })
 app.listen(3000, () => console.log("Listening on port 3000"))

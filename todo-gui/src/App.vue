@@ -1,70 +1,60 @@
 <template>
-  <div id="app">
-    <h1>Todos</h1>
-    <input v-model="newTodo"
-      placeholder="Was sollte gemacht werden?"
-      @keyup.enter="addTodo"
-      @keyup.escape="newTodo=''">
-    <ul v-if="todos.length !== 0">
-      <li v-for="(todo, index) of todos"
-        :key="index"
-        @click="toggleTodo(todo)"
-        :class="{done: todo.done}">
-        {{todo.text}}
-        <button @click.stop="deleteTodo(index)">x</button>
-      </li>
-    </ul>
-    <p v-else>Keine Todos</p>
-    <small>Click um Status zu toggeln</small>
-  </div>
+  <v-app>
+    <v-app-bar
+      app
+      color="primary"
+      dark
+    >
+      <div class="d-flex align-center">
+        <v-img
+          alt="Vuetify Logo"
+          class="shrink mr-2"
+          contain
+          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          transition="scale-transition"
+          width="40"
+        />
+
+        <v-img
+          alt="Vuetify Name"
+          class="shrink mt-1 hidden-sm-and-down"
+          contain
+          min-width="100"
+          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
+          width="100"
+        />
+      </div>
+
+      <v-spacer></v-spacer>
+
+      <v-btn
+        href="https://github.com/vuetifyjs/vuetify/releases/latest"
+        target="_blank"
+        text
+      >
+        <span class="mr-2">Latest Release</span>
+        <v-icon>mdi-open-in-new</v-icon>
+      </v-btn>
+    </v-app-bar>
+
+    <v-content>
+      <Tasks/>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
-import axios from 'axios'
+import Tasks from './components/Tasks';
 
 export default {
-  name: 'app',
-  data() {
-    return {
-      newTodo: '',
-      todos: []
-    }
-  },
-  methods: {
-    async addTodo() {
-      let todo = {
-        text: this.newTodo,
-        done: false
-      }
-      this.todos.push(todo)
-      this.newTodo = ''
-      let result = await axios.post('/api/todo', {text: todo.text})
-      todo.id = result.data[0]
-    },
-    async toggleTodo(todo) {
-        todo.done = !todo.done
-        await axios.put(`/api/todo/${todo.id}`, {done: todo.done})
-    },
-    async deleteTodo(index) {
-      let todo_id = this.todos[index].id
-      this.todos.splice(index, 1)
-      await axios.delete(`/api/todo/${todo_id}`)
-    }
-  },
-  async created() {
-    let response = await axios.get('/api/todo')
-    this.todos = response.data
-  }
-}
-</script>
+  name: 'App',
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  color: #2c3e50;
-  margin-top: 20px;
-}
-.done {
-  text-decoration: line-through;
-}
-</style>
+  components: {
+    Tasks,
+  },
+
+  data: () => ({
+    //
+  }),
+};
+</script>
