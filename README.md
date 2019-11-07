@@ -1,7 +1,7 @@
 # m141
-This is a for of the todo-app.
+This is a fork of the todo-app.
 It is adapted to work with a MySQL database.
-It consists of two parts, the API ans the GUI
+It consists of two parts, the GUI and the API.
 
 To start the API run ```nodemon```
 
