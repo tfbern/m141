@@ -23,8 +23,8 @@
                         <v-col cols="12">
                           <v-checkbox v-model="editedItem.done" label="erledigt"></v-checkbox>
                           <v-text-field v-model="editedItem.text" label="Bezeichung"></v-text-field>
-                          <v-text-field v-model="editedItem.start" label="Start"></v-text-field>
-                          <v-text-field v-model="editedItem.due" label="Fälligkeit"></v-text-field>
+                          <v-text-field v-model="editedItem.startdate" label="Start"></v-text-field>
+                          <v-text-field v-model="editedItem.duedate" label="Fälligkeit"></v-text-field>
                           <!--<v-date-picker v-model="picker" label="Start"> </v-date-picker>-->
                           <v-select :items="priorities" v-model="editedItem.priority" label="Priorität"> </v-select>
                           <v-select :items="owner" v-model="editedItem.ownerfull" label="Besitzer"> </v-select>
@@ -50,8 +50,8 @@
                 <v-icon v-else small @click="toggleItem(props.item)">mdi-checkbox-marked-outline</v-icon>
               </td>
               <td v-bind:style="cross(props.item.done)" class="text-start">{{ props.item.text }}</td>
-              <td v-bind:style="cross(props.item.done)" class="text-start">{{ formatDate(props.item.start) }}</td>
-              <td v-bind:style="cross(props.item.done)" class="text-start">{{ formatDate(props.item.due) }}</td>
+              <td v-bind:style="cross(props.item.done)" class="text-start">{{ formatDate(props.item.startdate) }}</td>
+              <td v-bind:style="cross(props.item.done)" class="text-start">{{ formatDate(props.item.duedate) }}</td>
               <td v-bind:style="cross(props.item.done)" class="text-start">{{ props.item.priority }}</td>
               <td v-bind:style="cross(props.item.done)" class="text-start">{{ props.item.ownerfull }}</td>
               <td v-bind:style="cross(props.item.done)" class="text-start">{{ props.item.status }}</td>
@@ -79,8 +79,8 @@ export default {
       headers: [
         { text: 'Erledigt', value: 'done'},
         { text: 'Task', value: 'text'},
-        { text: 'Start', value: 'start'},
-        { text: 'Fälligkeit', value: 'due'},
+        { text: 'Start', value: 'startdate'},
+        { text: 'Fälligkeit', value: 'duedate'},
         { text: 'Priorität', value: 'priority'},
         { text: 'Besitzer', value: 'ownerfull'},
         { text: 'Status', value: 'status'},
@@ -148,18 +148,18 @@ export default {
       let states = await axios.get('/api/status')
       states = states.data
       states.forEach(element => {
-        this.stati.push(element.state)
-        this.statesAssociative[element.state] = element.id
+        this.stati.push(element.status)
+        this.statesAssociative[element.status] = element.id
       });
     },
     toggleItem (item) {
       this.editedIndex = this.records.indexOf(item)
-      var status = this.records[this.editedIndex].done
-      this.records[this.editedIndex].done = !status
-      axios.put(`/api/todo/${item.id}`, {done:!status})
+      var done = this.records[this.editedIndex].done
+      this.records[this.editedIndex].done = !done
+      axios.put(`/api/todo/${item.id}`, {done:!done})
     },
     editItem (item) {
-      item.start = this.formatDate(item.start)
+      item.startdate = this.formatDate(item.startdate)
       this.editedIndex = this.records.indexOf(item)
       this.editedId = item.id
       // console.log(this.editedIndex, this.editedId)
@@ -196,12 +196,16 @@ export default {
         this.editedIndex = -1
       }, 300)
     },
-    cross(state) {
-      return (state==true) ? 'text-decoration:line-through':''
+    cross(status) {
+      return (status==true) ? 'text-decoration:line-through':''
     },
     formatDate(dateString) {
-      var d = new Date(dateString)
-      return d.getFullYear()  + "-" + (d.getMonth()+1) + "-" + d.getDate() 
+      if (dateString) {
+        var d = new Date(dateString)
+        return d.getFullYear()  + "-" + (d.getMonth()+1) + "-" + d.getDate() 
+      } else {
+        return null
+      }
     }
   }
 };
