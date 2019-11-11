@@ -26,9 +26,9 @@
                           <v-text-field v-model="editedItem.startdate" label="Start"></v-text-field>
                           <v-text-field v-model="editedItem.duedate" label="Fälligkeit"></v-text-field>
                           <!--<v-date-picker v-model="picker" label="Start"> </v-date-picker>-->
-                          <v-select :items="priorities" v-model="editedItem.priority" label="Priorität"> </v-select>
-                          <v-select :items="owner" v-model="editedItem.ownerfull" label="Besitzer"> </v-select>
-                          <v-select :items="stati" v-model="editedItem.status" label="Status"> </v-select>
+                          <v-select :items="priorities" item-text="priority" v-model="editedItem.priority" label="Priorität"> </v-select>
+                          <v-select :items="owners" item-text="fullname" v-model="editedItem.ownerfull" label="Besitzer"> </v-select>
+                          <v-select :items="states" item-text="status" v-model="editedItem.status" label="Status"> </v-select>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -88,26 +88,18 @@ export default {
       ],
       records: [
         // will be shown if database is not available
-        {"done": false, text: "Standardeintrag, keine Verbindung zu Datenbank?"}
+        {"done": false, text: "Datenbankverbindung prüfen"},
+        {"done": false, text: "Nochmals versuchen"}
       ],
       dialog: false,
       editedIndex: -1,
       editedId: -1,
-      editedItem: {
-        done:false
-      },
-      defaultItem: {
-      },
-      picker: new Date().toISOString().substr(0, 10),
-      priorities: [],
-      prioritiesAssociative: [],
-      stati: [],
-      statesAssociative: [],
-      owner: [],
-      ownerAssociative: []
-      // priorities: ["niedrig","normal","hoch"],
-      // stati: ["nicht begonnen", "in Bearbeitung", "erledigt", "wartet auf jemanden","zurückgestellt"],
-      // besitzer: ["Max Muster","Samuel Hess","Karin Fröhlich"],
+      editedItem: {},
+      defaultItem: {done:false, text:"", startdate:"2020-1-1", duedate:"2020-12-31", priority:"normal", ownerfull:"Samuel Hess", status:"nicht begonnen"},
+      priorities: [], // array of objects with properties id and priority
+      states: [],  // array of objects with properties id and status
+      owners: [], // array of objects with properties id, firstname, lastname and fullname
+      // picker: new Date().toISOString().substr(0, 10)
   }),
   
   computed: {
@@ -128,29 +120,19 @@ export default {
   
   methods: {
     async init () {
+      this.editedItem = Object.assign({}, this.defaultItem)
+
       let response = await axios.get('/api/todo')
       this.records = response.data
       
-      let priorities = await axios.get('/api/priority')
-      priorities = priorities.data
-      priorities.forEach(element => {
-        this.priorities.push(element.priority)
-        this.prioritiesAssociative[element.priority] = element.id
-      });
+      this.priorities = await axios.get('/api/priority')
+      this.priorities = this.priorities.data
 
-      let owners = await axios.get('/api/owner')
-      owners = owners.data
-      owners.forEach(element => {
-        this.owner.push(element.fullname)
-        this.ownerAssociative[element.fullname] = element.id
-      });
+      this.owners = await axios.get('/api/owner')
+      this.owners = this.owners.data
 
-      let states = await axios.get('/api/status')
-      states = states.data
-      states.forEach(element => {
-        this.stati.push(element.status)
-        this.statesAssociative[element.status] = element.id
-      });
+      this.states = await axios.get('/api/status')
+      this.states = this.states.data
     },
     toggleItem (item) {
       this.editedIndex = this.records.indexOf(item)
@@ -160,9 +142,9 @@ export default {
     },
     editItem (item) {
       item.startdate = this.formatDate(item.startdate)
+      item.duedate = this.formatDate(item.duedate)
       this.editedIndex = this.records.indexOf(item)
       this.editedId = item.id
-      // console.log(this.editedIndex, this.editedId)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
@@ -174,10 +156,10 @@ export default {
       }
     },
     save () {
-      console.log(this.editedItem.done)
-      this.editedItem.kpriority = this.prioritiesAssociative[this.editedItem.priority]
-      this.editedItem.kstatus = this.statesAssociative[this.editedItem.status]
-      this.editedItem.kowner = this.ownerAssociative[this.editedItem.ownerfull]
+      this.editedItem.kpriority = this.priorities.find(data => data.priority === this.editedItem.priority).id
+      this.editedItem.kstatus = this.states.find(data => data.status === this.editedItem.status).id
+      this.editedItem.kowner = this.owners.find(data => data.fullname === this.editedItem.ownerfull).id
+      // console.log(this.editedItem.kpriority, this.editedItem.kowner, this.editedItem.kstatus)
       if (this.editedIndex > -1) {
         // update
         Object.assign(this.records[this.editedIndex], this.editedItem)
