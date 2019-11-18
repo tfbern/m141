@@ -52,7 +52,6 @@ export default {
         };
         const response = await AuthService.login(credentials);
         this.msg = response.msg;
-        console.log(response)
         const token = response.token;
         const user = response.user;
         this.$store.dispatch('login', { token, user });

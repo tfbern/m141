@@ -1,17 +1,22 @@
 <template>
   <v-flex>
-  <div class="profile">
-    <table>
-      <tr align="left">
-        <th>Bezeichnung</th><th>Wert</th>
-      </tr>
-      <tr><td>Benutzername:</td><td >{{username}}</td></tr>
-      <tr><td>BenutzerID:</td><td>{{id}}</td></tr>
-      <tr><td>Registriert:</td><td>{{registered}}</td></tr>
-      <tr><td>Letztes Login:</td><td>{{lastlogin}}</td></tr>
-      <tr><td>Token:</td><td><textarea readonly rows="3" cols="100" v-model="token"></textarea></td></tr>
-    </table>
-  </div>
+    <v-simple-table>
+      <template v-slot:default>
+        <thead>
+          <tr>
+            <th class="text-left">Bezeichnung</th>
+            <th class="text-left">Wert</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr><td>Benutzername:</td><td >{{username}}</td></tr>
+            <tr><td>BenutzerID:</td><td>{{id}}</td></tr>
+            <tr><td>Registriert:</td><td>{{registered}}</td></tr>
+            <tr><td>Letztes Login:</td><td>{{lastlogin}}</td></tr>
+            <tr><td>Token:</td><td>{{token}}</td></tr>
+        </tbody>
+      </template>
+    </v-simple-table>
   </v-flex>
 </template>
 <script>
