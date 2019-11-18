@@ -38,19 +38,26 @@
     </v-app-bar>
 
     <v-content>
-      <Tasks/>
+      <v-container>
+        <v-row align="center" justify="center"> 
+          <Menu/>
+        </v-row> 
+        <v-row align="center" justify="center">
+          <router-view/>
+        </v-row>  
+      </v-container>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import Tasks from './components/Tasks';
+import Menu from './components/Menu';
 
 export default {
   name: 'App',
 
   components: {
-    Tasks,
+    Menu,
   },
 
   data: () => ({
