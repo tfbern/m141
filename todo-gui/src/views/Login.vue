@@ -1,7 +1,8 @@
 // src/views/Login.vue
 <template>
   <v-col cols="12" sm="8" md="4">
-    <v-card class="elevation-12">
+    <p v-if="isAuth">You are already logged in! See your <a href="profile">profile</a>.</p>
+    <v-card v-if="!isAuth" class="elevation-12">
       <v-toolbar color="primary" dark flat>
         <v-toolbar-title>Login</v-toolbar-title>
       </v-toolbar>
@@ -36,11 +37,13 @@
 <script>
 import AuthService from '@/services/AuthService.js';
 export default {
+  name: 'Login',
+  props: ['isAuth'],
   data() {
     return {
       username: '',
       password: '',
-      msg: ''
+      msg: '',
     };
   },
   methods: {

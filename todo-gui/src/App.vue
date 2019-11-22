@@ -40,10 +40,18 @@
     <v-content>
       <v-container>
         <v-row align="center" justify="center"> 
-          <Menu/>
+            <div id="nav" style="margin-top:20px; margin-bottom:20px">
+                <router-link class="nav-link" to="/">Home</router-link> |
+                <router-link v-if="!isAuth" to="/register">Register</router-link><span v-if="!isAuth"> | </span>
+                <router-link v-if="!isAuth" to="/login">Login</router-link>
+                <router-link v-if="isAuth" to="/tasks">Tasks</router-link><span v-if="isAuth"> | </span>
+                <router-link v-if="isAuth" to="/profile">Profil</router-link><span v-if="isAuth"> | </span>
+                <!-- router-link does not support v-on:click -->
+                <router-link v-if="isAuth" to="/"><span v-on:click="logout">Logout</span></router-link>
+            </div>
         </v-row> 
         <v-row align="center" justify="center">
-          <router-view/>
+          <router-view :isAuth="isAuth" :username="username"/>
         </v-row>  
       </v-container>
     </v-content>
@@ -51,17 +59,34 @@
 </template>
 
 <script>
-import Menu from './components/Menu';
-
 export default {
   name: 'App',
 
   components: {
-    Menu,
   },
-
-  data: () => ({
-    //
-  }),
+  data: function () {
+    return {
+        isAuth: '',
+        username: ''
+    }
+  },
+  mounted() {
+    this.init()
+  },
+  updated() {
+    this.init()
+  },
+  methods: {
+    init() {
+      this.isAuth = this.$store.getters.isLoggedIn
+      if (this.isAuth) {
+        this.username = this.$store.getters.getUser.username;
+      }
+    },
+    logout() {
+      this.isAuth = false
+      this.$store.dispatch('logout')
+    }
+  }
 };
 </script>
