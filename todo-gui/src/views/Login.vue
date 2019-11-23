@@ -35,7 +35,7 @@
   </v-col>
 </template>
 <script>
-import AuthService from '@/services/AuthService.js';
+import axios from 'axios';
 export default {
   name: 'Login',
   props: ['isAuth'],
@@ -53,7 +53,8 @@ export default {
           username: this.username,
           password: this.password
         };
-        const response = await AuthService.login(credentials);
+        const response = await axios.post('/api/user/login', credentials)
+                                .then(response => response.data);
         this.msg = response.msg;
         const token = response.token;
         const user = response.user;

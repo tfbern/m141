@@ -5,6 +5,7 @@ import Register from "../views/Register.vue"
 import Login from "../views/Login.vue"
 import Tasks from "../views/Tasks.vue"
 import Profile from "../views/Profile.vue"
+import Users from "../views/Users.vue"
 import store from "../store/store.js"
 
 Vue.use(VueRouter)
@@ -32,6 +33,14 @@ var router = new VueRouter({
       path: "/tasks",
       name: "tasks",
       component: Tasks,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/users",
+      name: "users",
+      component: Users,
       meta: {
         requiresAuth: true
       }

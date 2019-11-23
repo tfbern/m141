@@ -5,52 +5,52 @@
       color="primary"
       dark
     >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
-
-      <v-spacer></v-spacer>
-
+      <v-row> 
+        <v-col align="start" justify="start">
+          <div class="d-flex align-center">
+            <v-img
+              alt="Vuetify Logo"
+              class="shrink mr-2"
+              contain
+              src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+              transition="scale-transition"
+              width="40"
+            />
+            <h2>Aufgabenmanager</h2>
+          </div>
+        </v-col>
+        <v-col align="center" justify="center">
+        <div id="nav" style="margin-top:12px">
+          <router-link style="color:white" to="/">Home</router-link><span v-if="isAuth"> | </span>
+          <router-link style="color:white" v-if="isAuth" to="/tasks">Tasks</router-link><span v-if="isAuth"> | </span>
+          <router-link style="color:white" v-if="isAuth" to="/users">Users</router-link>
+        </div>
+        </v-col>
+        <v-col align="right" justify="right">
+        <div id="nav" style="margin-top:12px">
+          <router-link style="color:white" v-if="!isAuth" to="/register">Register</router-link><span v-if="!isAuth"> | </span>
+          <router-link style="color:white" v-if="!isAuth" to="/login">Login</router-link>
+          <router-link style="color:white" v-if="isAuth" to="/profile">Profil</router-link><span v-if="isAuth"> | </span>
+          <!-- router-link does not support v-on:click -->
+          <router-link style="color:white" v-if="isAuth" to="/"><span v-on:click="logout">Logout</span></router-link>
+        </div>
+        </v-col>
+      </v-row> 
+      <!--
       <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
+        href="https://github.com/tfbern/m141"
         target="_blank"
         text
       >
-        <span class="mr-2">Latest Release</span>
+        <span class="mr-2">Version 0.9</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
+      -->
     </v-app-bar>
 
     <v-content>
       <v-container>
-        <v-row align="center" justify="center"> 
-            <div id="nav" style="margin-top:20px; margin-bottom:20px">
-                <router-link class="nav-link" to="/">Home</router-link> |
-                <router-link v-if="!isAuth" to="/register">Register</router-link><span v-if="!isAuth"> | </span>
-                <router-link v-if="!isAuth" to="/login">Login</router-link>
-                <router-link v-if="isAuth" to="/tasks">Tasks</router-link><span v-if="isAuth"> | </span>
-                <router-link v-if="isAuth" to="/profile">Profil</router-link><span v-if="isAuth"> | </span>
-                <!-- router-link does not support v-on:click -->
-                <router-link v-if="isAuth" to="/"><span v-on:click="logout">Logout</span></router-link>
-            </div>
-        </v-row> 
-        <v-row align="center" justify="center">
+        <v-row align="center" justify="center" style="margin-top:20px;">
           <router-view :isAuth="isAuth" :username="username"/>
         </v-row>  
       </v-container>

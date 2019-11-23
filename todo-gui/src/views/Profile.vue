@@ -1,5 +1,6 @@
 <template>
   <v-flex>
+    <h2>Benutzerprofil</h2>
     <v-simple-table>
       <template v-slot:default>
         <thead>
