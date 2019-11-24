@@ -19,7 +19,6 @@ CREATE TABLE IF NOT EXISTS `m141`.`task` (
 
 CREATE TABLE IF NOT EXISTS `m141`.`user` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `uuid` VARCHAR(45) NOT NULL,
   `username` VARCHAR(45) NOT NULL,
   `password` VARCHAR(255) NULL DEFAULT NULL,
   `registered` DATETIME NULL DEFAULT NULL,
@@ -30,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `m141`.`user` (
   PRIMARY KEY (`id`))
 
 /* Fill in some test user */
-INSERT INTO `user`(firstname,lastname,username,uuid,registered) 
-VALUES ('Peter', 'Müller','peter@mueller',uuid(),now());
+INSERT INTO `user`(firstname,lastname,username,registered) 
+VALUES ('Peter', 'Müller','peter@mueller',now());
 /* Fill in some test task */
 INSERT INTO task(`text`,`user`) VALUES ('erste Aufgabe',1);
