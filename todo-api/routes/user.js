@@ -49,7 +49,26 @@ function validateRegister (req, res, next)  {
   }
   next();
 }
-user.post('/user', validateRegister, async (req, res, next) => {
+
+user.put('/user/:id', auth.isLoggedIn, async (req, res) => {
+  var user = await knex('user').where('username', req.body.username).then(data => data[0])
+  var isequal = await bcrypt.compare(req.body.password, user.password)
+  if (isequal && req.body.newPassword === req.body.newPasswordRepeat) {
+    try {
+      var hash = await bcrypt.hash(req.body.newPassword, 10)
+      let results = await knex('user')
+        .update({
+          password: hash,
+        })
+        .where('username', req.body.username)
+      res.json(results)
+    } catch (err) {
+      res.status(200).json(err)
+    }
+  }
+});
+
+user.post('/user', validateRegister, async (req, res) => {
   let results = await knex('user')
                         .where('username', req.body.username)
   if (results.length) {
@@ -79,7 +98,7 @@ user.post('/user', validateRegister, async (req, res, next) => {
   }
 });
 
-user.post('/user/login', async (req, res, next) => {
+user.post('/user/login', async (req, res) => {
   let results = await knex('user')
                         .where('username', req.body.username)
   if (!results.length) {
@@ -92,7 +111,6 @@ user.post('/user/login', async (req, res, next) => {
     bcrypt.compare(req.body.password, user.password, async (bErr, bResult) => {
       // wrong password
       if (bErr) {
-        throw bErr;
         return res.status(401).send({
           msg: 'Username or password is incorrect!'
         });
@@ -102,7 +120,7 @@ user.post('/user/login', async (req, res, next) => {
             username: user.username,
             userId: user.id
           },
-          'SECRETKEY', {expiresIn: '7d'}
+          'SECRETKEY', {expiresIn: '1d'}
         );
 
         let results = await knex('user')
@@ -111,7 +129,7 @@ user.post('/user/login', async (req, res, next) => {
                               .where('id', user.id)
         return res.status(200).send({
           msg: 'Logged in!',
-          token,
+          token: token,
           user: user
         });
       } else {

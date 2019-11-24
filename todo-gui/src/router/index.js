@@ -6,6 +6,7 @@ import Login from "../views/Login.vue"
 import Tasks from "../views/Tasks.vue"
 import Profile from "../views/Profile.vue"
 import Users from "../views/Users.vue"
+import Password from "../views/Password.vue"
 import store from "../store/store.js"
 
 Vue.use(VueRouter)
@@ -53,6 +54,14 @@ var router = new VueRouter({
         requiresAuth: true
       }
     },
+    {
+      path: '/passwd',
+      name: 'passwd',
+      component: Password,
+      meta: {
+        requiresAuth: true
+      }
+    }
   ]
 })
 

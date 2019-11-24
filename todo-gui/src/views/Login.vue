@@ -61,7 +61,6 @@ export default {
         this.$store.dispatch('login', { token, user });
         this.$router.push('/');
       } catch (error) {
-        // console.log(error)
         this.msg = 'Username or password is incorrect';
       }
     },

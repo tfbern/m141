@@ -1,6 +1,6 @@
 <template>
   <v-flex>
-    <v-data-table :headers="headers" :items="records" :items-per-page="10" class="elevation-1" @update="alet('update')">
+    <v-data-table :headers="headers" :items="records" :items-per-page="10" class="elevation-1">
       <!-- the header of the data table -->
       <template v-slot:top>
         <v-toolbar flat color="white">
@@ -121,8 +121,13 @@ export default {
                               .then(results => results.data)
       this.currentUser = this.owners.find(data => data.username === this.username)
       if (this.currentUser !== undefined) {
-        this.records = await axios.get(`/api/tasks/${this.currentUser.id}`)
-                                .then(results => results.data)
+        if (this.username === 'admin') {
+          this.records = await axios.get('/api/tasks')
+                                  .then(results => results.data)
+        } else { //normal user
+          this.records = await axios.get(`/api/tasks/${this.currentUser.id}`)
+                                  .then(results => results.data)
+        }
       }
     },
     toggleItem (item) {

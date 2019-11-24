@@ -21,18 +21,18 @@
         </v-col>
         <v-col align="center" justify="center">
         <div id="nav" style="margin-top:12px">
-          <router-link style="color:white" to="/">Home</router-link><span v-if="isAuth"> | </span>
-          <router-link style="color:white" v-if="isAuth" to="/tasks">Tasks</router-link><span v-if="isAuth"> | </span>
-          <router-link style="color:white" v-if="isAuth" to="/users">Users</router-link>
+          <router-link class="router-link" to="/">Home</router-link><span v-if="isAuth"> | </span>
+          <router-link class="router-link" v-if="isAuth" to="/tasks">Tasks</router-link><span v-if="isAuth && username === 'admin'"> | </span>
+          <router-link class="router-link" v-if="isAuth && username === 'admin'" to="/users">Users</router-link>
         </div>
         </v-col>
         <v-col align="right" justify="right">
         <div id="nav" style="margin-top:12px">
-          <router-link style="color:white" v-if="!isAuth" to="/register">Register</router-link><span v-if="!isAuth"> | </span>
-          <router-link style="color:white" v-if="!isAuth" to="/login">Login</router-link>
-          <router-link style="color:white" v-if="isAuth" to="/profile">Profil</router-link><span v-if="isAuth"> | </span>
+          <router-link class="router-link" v-if="!isAuth" to="/register">Register</router-link><span v-if="!isAuth"> | </span>
+          <router-link class="router-link" v-if="!isAuth" to="/login">Login</router-link>
+          <router-link class="router-link" v-if="isAuth" to="/profile">{{fullname}}</router-link><span v-if="isAuth"> | </span>
           <!-- router-link does not support v-on:click -->
-          <router-link style="color:white" v-if="isAuth" to="/"><span v-on:click="logout">Logout</span></router-link>
+          <router-link class="router-link" v-if="isAuth" to="/login"><span v-on:click="logout">Logout</span></router-link>
         </div>
         </v-col>
       </v-row> 
@@ -67,7 +67,8 @@ export default {
   data: function () {
     return {
         isAuth: '',
-        username: ''
+        username: '',
+        fullname: ''
     }
   },
   mounted() {
@@ -81,6 +82,7 @@ export default {
       this.isAuth = this.$store.getters.isLoggedIn
       if (this.isAuth) {
         this.username = this.$store.getters.getUser.username;
+        this.fullname = this.$store.getters.getUser.fullname;
       }
     },
     logout() {
@@ -90,3 +92,13 @@ export default {
   }
 };
 </script>
+<style>
+  .router-link {
+    color:white !important;
+    text-decoration: none;  
+  }
+  .router-link-exact-active {
+    color:white !important;
+    text-decoration: underline; 
+  }
+</style>
