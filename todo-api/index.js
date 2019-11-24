@@ -1,12 +1,25 @@
-const useLogging = true
+/*
+ * Author:      Samuel Hess
+ * File name:   index.js
+ * Version:     1.0
+ * Description: The main file of the REST API
+ *              Initialize express and other dependencies
+ *              Redirect requests to routing controller
+ */
+
+const port = process.env.PORT || 3000
 const express = require('express')
 const app = express()
-app.use(express.json())
-if (useLogging){
-  var morgan = require('morgan') // logs requests on console
+// logs requests including body to console
+// use logging if environment variable defined by nodemon.json is true
+const logging = process.env.nodemon_logging || false
+if (logging){
+  var morgan = require('morgan') 
   morgan.token('body', function (req, res) { return JSON.stringify(req.body) });
-  app.use(morgan(':method :url :body :status')) // use 'tiny' or 'combined'
+  app.use(morgan(':method :url :body :status'))
 }
+
+app.use(express.json())
 
 // add routes
 const home = require('./routes/home');
@@ -21,4 +34,4 @@ app.get('/', (req, res) =>{
     res.redirect('/api')
 })
     
-app.listen(3000, () => console.log("Listening on port 3000"))
+app.listen(port, console.log("Listening on port " + port))

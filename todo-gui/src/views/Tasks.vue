@@ -58,7 +58,7 @@
         </tr>
       </template>
       <template v-slot:no-data>
-        <p>You don't have any tasks!</p>
+        <p>You don't have any tasks or there is no connection to database!</p>
         <!--<v-btn color="primary" @click="init">Reload</v-btn>-->
       </template>
     </v-data-table>
@@ -120,15 +120,19 @@ export default {
       this.owners = await axios.get('/api/user')
                               .then(results => results.data)
       this.currentUser = this.owners.find(data => data.username === this.username)
-      this.records = await axios.get(`/api/tasks/${this.currentUser.id}`)
-                              .then(results => results.data)
+      if (this.currentUser !== undefined) {
+        this.records = await axios.get(`/api/tasks/${this.currentUser.id}`)
+                                .then(results => results.data)
+      }
     },
     toggleItem (item) {
       var index = this.records.indexOf(item)
       var status = this.records[index].status
       status = (status === 'erledigt') ? 'in Bearbeitung' : 'erledigt'
-      this.records[index].status = status
-      axios.put(`/api/tasks/${item.id}`, {status:status})
+      if (item.id) {
+        axios.put(`/api/tasks/${item.id}`, {status:status})
+        this.records[index].status = status
+      } else {alert('ID missing, cannot toggle')}
     },
     editItem (item) {
       item.startdate = this.formatDate(item.startdate)
@@ -145,22 +149,29 @@ export default {
         axios.delete(`/api/task/${item.id}`)
       }
     },
-    save () {
+    async save () {
       this.editedItem.kuser = this.owners.find(obj => obj.fullname === this.editedItem.userfull).id
       if (this.editedIndex > -1) { // update
-        if (this.currentUser.fullname === this.editedItem.userfull) {
-          Object.assign(this.records[this.editedIndex], this.editedItem)
-        } else {
-          this.records.splice(this.editedIndex, 1)
-        }
         delete this.editedItem.userfirst // do not send this attribute to API
         delete this.editedItem.userlast // do not send this attribute to API
-        delete this.editedItem.userfull // do not send this attribute to API
-        axios.put(`/api/tasks/${this.editedId}`, this.editedItem)
+        // will send possibly wrong editedItem.userfull to API but it does not hurt
+        var data = await axios.put(`/api/tasks/${this.editedId}`, this.editedItem)
+                                .then(results => results.data)
+        if (!data.code){
+          if (this.currentUser.fullname === this.editedItem.userfull) {
+            Object.assign(this.records[this.editedIndex], this.editedItem)
+          } else {
+            // remove item from this view because it now belongs to a different user
+            this.records.splice(this.editedIndex, 1)
+            alert('Aufgabe wurde ' + this.editedItem.userfull + 'zugewiesen.')
+          }
+        } else alert(data.sqlMessage)
       } else { // create
-        this.records.push(this.editedItem)
-        delete this.editedItem.userfull // do not send this attribute to API
-        axios.post('/api/tasks', this.editedItem)
+        this.editedItem.id = await axios.post('/api/tasks', this.editedItem)
+                              .then(results => results.data[0])
+        if (this.currentUser.fullname === this.editedItem.userfull) {
+          this.records.push(this.editedItem)
+        } else {alert('Aufgabe wurde ' + this.editedItem.userfull + 'zugewiesen.')}
       }
       this.close()
     },

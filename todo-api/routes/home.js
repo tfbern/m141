@@ -3,22 +3,26 @@ const express = require('express');
 const home = express.Router();
 
 endpoints = [{
-    name:'view tasks',
+    name:'/api/tasks/:id',
+    entity:'view tasks',
     path:'/api/tasks',
-    oprations:'create, read, update'
+    oprations:'POST, GET, PUT'
   },{
-    name:'table task',
+    name:'/api/task/:id',
+    entity:'table task',
     path:'/api/task',
-    oprations:'delete'
+    oprations:'GET, DELETE'
   },{
-    name:'table user',
+    name:'/api/user/:id',
+    entity:'table user',
     path:'/api/user',
-    oprations:'create, read, delete'
+    oprations:'POST, GET, DELETE'
   },
   {
-    name:'table user',
+    name:'/api/user/login',
+    entity:'table user',
     path:'/api/user/login',
-    oprations:'read'
+    oprations:'POST'
   }
 ]
 
@@ -27,17 +31,18 @@ home.get('/', (req, res) => {
     html += '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">'
     html += '</head><body><div class="container"><br>'
     html += '<h1>Welcome to Todo-API</h1>'
+    html += '<p>To access the endpoints you need a valid session. Your client (browser, Postman, axios, etc.) must include a valid bearer token in the authorization field of the http header!</p>'
     html += '<table class="table"><tr>'
     html += '<th>Endpoint</th>'
     html += '<th>Database entity</th>'
-    html += '<th>CRUD operations</th></tr>'
+    html += '<th>HTTP methods</th></tr>'
     endpoints.forEach(point => {
       html += "<tr><td><a href="
       html += point.path
       html += ">"
-      html += point.path
-      html += "</a></td><td>"
       html += point.name
+      html += "</a></td><td>"
+      html += point.entity
       html += "</td><td>"
       html += point.oprations
       html += "</td></tr>"

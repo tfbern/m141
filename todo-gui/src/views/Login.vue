@@ -53,11 +53,11 @@ export default {
           username: this.username,
           password: this.password
         };
-        const response = await axios.post('/api/user/login', credentials)
+        const data = await axios.post('/api/user/login', credentials)
                                 .then(response => response.data);
-        this.msg = response.msg;
-        const token = response.token;
-        const user = response.user;
+        this.msg = data.msg;
+        const token = data.token;
+        const user = data.user;
         this.$store.dispatch('login', { token, user });
         this.$router.push('/');
       } catch (error) {

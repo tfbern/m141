@@ -4,17 +4,17 @@ const user = express.Router()
 const knexconf = require('../knexconf')
 const knex = require('knex')(knexconf)
 const bcrypt = require('bcryptjs');
-const uuid = require('uuid');
 const jwt = require('jsonwebtoken');
+const auth = require('../auth');
 
 // read user
-user.get('/user', async (req, res) =>{
+user.get('/user', auth.isLoggedIn, async (req, res) =>{
   let results = await knex('user')
   res.json(results)
 })
 
 // delete user
-user.delete('/user/:id', async (req, res) => {
+user.delete('/user/:id', auth.isLoggedIn, async (req, res) => {
   try {
     let results = await knex('user')
                         .where('id', req.params.id)
@@ -67,8 +67,9 @@ user.post('/user', validateRegister, async (req, res, next) => {
         // has hashed pw => add to database
         let results = await knex('user')
                               .insert({
-                                uuid: uuid.v4(),
                                 username: req.body.username,
+                                firstname: req.body.firstname,
+                                lastname: req.body.lastname,
                                 password: hash,
                                 registered: new Date()
                               })

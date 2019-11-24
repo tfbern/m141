@@ -16,6 +16,22 @@
           ></v-text-field>
 
           <v-text-field
+            v-model="firstname"
+            label="Vorname"
+            name="firstname"
+            prepend-icon="mdi-account"
+            type="text"
+          ></v-text-field>
+
+          <v-text-field
+            v-model="lastname"
+            label="Nachname"
+            name="lastname"
+            prepend-icon="mdi-account"
+            type="text"
+          ></v-text-field>
+
+          <v-text-field
             v-model="password"
             id="password"
             label="Password"
@@ -48,6 +64,8 @@ export default {
   data() {
     return {
       username: '',
+      firstname: '',
+      lastname: '',
       password: '',
       password_repeat: '',
       msg: ''
@@ -56,13 +74,15 @@ export default {
   methods: {
     async signUp() {
       try {
-        const credentials = {
+        const account = {
           username: this.username,
+          firstname: this.firstname,
+          lastname: this.lastname,
           password: this.password,
           password_repeat: this.password_repeat
         };
         const response = await axios
-          .post('/api/user', credentials)
+          .post('/api/user', account)
           .then(response => response.data);
         this.msg = response.msg;
         this.$router.push('/login')
