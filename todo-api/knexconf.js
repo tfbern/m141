@@ -3,7 +3,7 @@ const conf = {
   connection: {
     host : '127.0.0.1',
     database : 'm141',
-    user : 'webapp',
+    user : 'root',
     password : 'sml12345'
   }
 }

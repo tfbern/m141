@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `m141`.`user` (
   `fullname` VARCHAR(91) GENERATED ALWAYS AS (concat(`firstname`,_utf8mb4' ',`lastname`)) VIRTUAL,
   PRIMARY KEY (`id`));
   
-  CREATE TABLE IF NOT EXISTS `m141`.`task` (
+ CREATE TABLE IF NOT EXISTS `m141`.`task` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `text` VARCHAR(45) NOT NULL,
   `startdate` DATE NULL DEFAULT (curdate()),
@@ -27,6 +27,20 @@ CREATE TABLE IF NOT EXISTS `m141`.`user` (
     REFERENCES `m141`.`user` (`id`)
     ON DELETE RESTRICT
     ON UPDATE RESTRICT);
+	
+CREATE VIEW tasks AS
+SELECT task.id, 
+	`text`,
+	startdate,
+	duedate,
+	task.priority,
+	task.`status`,
+	task.`user` AS kuser,
+	`user`.firstname AS userfirst,
+	`user`.lastname AS userlast,
+	`user`.fullname AS userfull
+FROM task
+	JOIN `user` ON task.`user`=`user`.id
 
 /* Fill in some test user */
 INSERT INTO `user`(firstname,lastname,username,registered) 
