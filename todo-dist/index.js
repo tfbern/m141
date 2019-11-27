@@ -9,6 +9,7 @@
 
 const port = process.env.PORT || 80
 const express = require('express')
+const fallback = require('express-history-api-fallback')
 const app = express()
 // logs requests including body to console
 // use logging if environment variable defined by nodemon.json is true
@@ -31,8 +32,10 @@ app.use('/api', task);
 app.use('/api', user);
 
 // host GUI as static content
-app.use('/', express.static(__dirname + '/gui'));
-app.use('/js', express.static(__dirname + '/gui/js'));
-app.use('/css', express.static(__dirname + '/gui/css'));
+const root = `${__dirname}/gui`
+app.use('/', express.static(root))
+app.use('/js', express.static(root+ '/js'));
+app.use('/css', express.static(root + '/css'));
+app.use(fallback('index.html', { root }))
     
 app.listen(port, console.log("Listening on port " + port))
