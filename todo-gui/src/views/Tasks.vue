@@ -22,9 +22,9 @@
                       <v-text-field v-model="editedItem.text" label="Bezeichung"></v-text-field>
                       <v-text-field v-model="editedItem.startdate" label="Start"></v-text-field>
                       <v-text-field v-model="editedItem.duedate" label="Fälligkeit"></v-text-field>
-                      <v-select :items="priorities" v-model="editedItem.priority" label="Priorität"> </v-select>
+                      <v-select :items="priorities" item-text="priority" v-model="editedItem.priority" label="Priorität"> </v-select>
                       <v-select :items="owners" item-text="fullname" v-model="editedItem.userfull" label="Besitzer"> </v-select>
-                      <v-select :items="states" v-model="editedItem.status" label="Status"> </v-select>
+                      <v-select :items="states" item-text="state" v-model="editedItem.status" label="Status"> </v-select>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -113,19 +113,19 @@ export default {
   methods: {
     async init () {
       this.editedItem = Object.assign({}, this.defaultItem)
-      this.priorities = await axios.get('/api/task/priorities')
+      this.priorities = await axios.get('/api/task/priority')
                               .then(results => results.data)
-      this.states = await axios.get('/api/task/states')
+      this.states = await axios.get('/api/task/state')
                               .then(results => results.data)
       this.owners = await axios.get('/api/user')
                               .then(results => results.data)
       this.currentUser = this.owners.find(data => data.username === this.username)
       if (this.currentUser !== undefined) {
         if (this.username === 'admin') {
-          this.records = await axios.get('/api/tasks')
+          this.records = await axios.get('/api/task')
                                   .then(results => results.data)
         } else { //normal user
-          this.records = await axios.get(`/api/tasks/${this.currentUser.id}`)
+          this.records = await axios.get(`/api/task/getByUser/${this.currentUser.id}`)
                                   .then(results => results.data)
         }
       }
@@ -135,7 +135,7 @@ export default {
       var status = this.records[index].status
       status = (status === 'erledigt') ? 'in Bearbeitung' : 'erledigt'
       if (item.id) {
-        axios.put(`/api/tasks/${item.id}`, {status:status})
+        axios.put(`/api/task/${item.id}`, {status:status})
         this.records[index].status = status
       } else {alert('ID missing, cannot toggle')}
     },
@@ -160,7 +160,7 @@ export default {
         delete this.editedItem.userfirst // do not send this attribute to API
         delete this.editedItem.userlast // do not send this attribute to API
         // will send possibly wrong editedItem.userfull to API but it does not hurt
-        var data = await axios.put(`/api/tasks/${this.editedId}`, this.editedItem)
+        var data = await axios.put(`/api/task/${this.editedId}`, this.editedItem)
                                 .then(results => results.data)
         if (!data.code){
           if (this.currentUser.fullname === this.editedItem.userfull) {
@@ -172,7 +172,7 @@ export default {
           }
         } else alert(data.sqlMessage)
       } else { // create
-        this.editedItem.id = await axios.post('/api/tasks', this.editedItem)
+        this.editedItem.id = await axios.post('/api/task', this.editedItem)
                               .then(results => results.data[0])
         if (this.currentUser.fullname === this.editedItem.userfull) {
           this.records.push(this.editedItem)

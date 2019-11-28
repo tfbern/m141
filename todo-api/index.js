@@ -23,11 +23,9 @@ app.use(express.json())
 
 // add routes
 const home = require('./routes/home');
-const tasks = require('./routes/tasks');
 const task = require('./routes/task');
 const user = require('./routes/user');
 app.use('/api', home);
-app.use('/api', tasks);
 app.use('/api', task);
 app.use('/api', user);
 app.get('/', (req, res) =>{
