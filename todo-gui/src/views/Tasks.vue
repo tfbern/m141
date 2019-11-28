@@ -24,7 +24,7 @@
                       <v-text-field v-model="editedItem.duedate" label="Fälligkeit"></v-text-field>
                       <v-select :items="priorities" item-text="priority" v-model="editedItem.priority" label="Priorität"> </v-select>
                       <v-select :items="owners" item-text="fullname" v-model="editedItem.userfull" label="Besitzer"> </v-select>
-                      <v-select :items="states" item-text="state" v-model="editedItem.status" label="Status"> </v-select>
+                      <v-select :items="states" item-text="status" v-model="editedItem.status" label="Status"> </v-select>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -121,13 +121,8 @@ export default {
                               .then(results => results.data)
       this.currentUser = this.owners.find(data => data.username === this.username)
       if (this.currentUser !== undefined) {
-        if (this.username === 'admin') {
-          this.records = await axios.get('/api/task')
+        this.records = await axios.get(`/api/task/getByUser/${this.currentUser.id}`)
                                   .then(results => results.data)
-        } else { //normal user
-          this.records = await axios.get(`/api/task/getByUser/${this.currentUser.id}`)
-                                  .then(results => results.data)
-        }
       }
     },
     toggleItem (item) {
@@ -168,7 +163,7 @@ export default {
           } else {
             // remove item from this view because it now belongs to a different user
             this.records.splice(this.editedIndex, 1)
-            alert('Aufgabe wurde ' + this.editedItem.userfull + 'zugewiesen.')
+            alert('Aufgabe wurde ' + this.editedItem.userfull + ' zugewiesen.')
           }
         } else alert(data.sqlMessage)
       } else { // create
@@ -176,7 +171,7 @@ export default {
                               .then(results => results.data[0])
         if (this.currentUser.fullname === this.editedItem.userfull) {
           this.records.push(this.editedItem)
-        } else {alert('Aufgabe wurde ' + this.editedItem.userfull + 'zugewiesen.')}
+        } else {alert('Aufgabe wurde ' + this.editedItem.userfull + ' zugewiesen.')}
       }
       this.close()
     },

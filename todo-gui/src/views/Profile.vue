@@ -13,6 +13,7 @@
         <tbody>
             <tr><td>Benutzername:</td><td colspan=2>{{ username }}</td></tr>
             <tr><td>Name:</td><td colspan=2>{{ name }}</td></tr>
+            <tr><td>Rolle:</td><td colspan=2>{{ role }}</td></tr>
             <tr><td>Benutzer ID:</td><td colspan=2>{{ id }}</td></tr>
             <tr><td>Passwort Hash:</td><td>{{ password }}</td><td><router-link to="/passwd">Passwort ändern</router-link></td></tr>
             <tr><td>Registriert:</td><td colspan=2>{{ formatDate(registered) }}</td></tr>
@@ -49,6 +50,7 @@ export default {
     return {
       id: '',
       name: '',
+      role: '',
       password: '',
       registered: '',
       lastlogin: '',
@@ -66,6 +68,7 @@ export default {
     if (this.token) {
       this.id = this.$store.getters.getUser.id;
       this.name = this.$store.getters.getUser.fullname;
+      this.role = this.$store.getters.getUser.role;
       this.password = this.$store.getters.getUser.password;
       this.registered = this.$store.getters.getUser.registered;
       this.lastlogin = this.$store.getters.getUser.lastlogin;

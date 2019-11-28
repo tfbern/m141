@@ -4,6 +4,7 @@ USE m141;
 CREATE TABLE IF NOT EXISTS `user` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(45) NOT NULL,
+  `role` ENUM('admin', 'user') NOT NULL DEFAULT 'user',
   `password` VARCHAR(255) NULL DEFAULT NULL,
   `registered` DATETIME NULL DEFAULT NULL,
   `lastlogin` DATETIME NULL DEFAULT NULL,

@@ -5,6 +5,7 @@
       <template slot="item" slot-scope="props">
         <tr>
           <td class="text-start">{{ props.item.username }}</td>
+          <td class="text-start">{{ props.item.role }}</td>
           <td class="text-start">{{ props.item.fullname }}</td>
           <td class="text-start">{{ formatDate(props.item.registered) }}</td>
           <td class="text-start">{{ formatDate(props.item.lastlogin) }}</td>
@@ -29,6 +30,7 @@ export default {
   data: () => ({
     headers: [
       { text: 'Benutzername', value: 'username'},
+      { text: 'Rolle', value: 'role'},
       { text: 'Name', value: 'fullname'},
       { text: 'Registriert', value: 'registered'},
       { text: 'Letztes Login', value: 'lastlogin'},
