@@ -27,15 +27,15 @@ user.delete('/user/:id', auth.isLoggedIn, async (req, res) => {
 
 function validateRegister (req, res, next)  {
   // username min length 3
-  if (!req.body.username || req.body.username.length < 3) {
+  if (!req.body.username || req.body.username.length < 2) {
     return res.status(400).send({
-      msg: 'Please enter a username with min. 3 chars'
+      msg: 'Please enter a username with at least 2 characters'
     });
   }
   // password min 6 chars
   if (!req.body.password || req.body.password.length < 6) {
     return res.status(400).send({
-      msg: 'Please enter a password with min. 6 chars'
+      msg: 'Please enter a password with at least 6 characters'
     });
   }
   // password (repeat) does not match

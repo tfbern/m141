@@ -48,24 +48,24 @@ CREATE TABLE IF NOT EXISTS `task` (
     
 CREATE VIEW tasks AS
 SELECT task.id, 
-	`text`,
-	startdate,
-	duedate,
-	task.priority AS kpriority,
-	priority.priority,
-	task.`status` AS kstatus,
-	`status`.`status` AS `status`,
-	task.`user` AS kuser,
-	`user`.firstname AS userfirst,
-	`user`.lastname AS userlast,
-	`user`.fullname AS userfull
+  `text`,
+  startdate,
+  duedate,
+  task.priority AS kpriority,
+  priority.priority,
+  task.`status` AS kstatus,
+  `status`.`status` AS `status`,
+  task.`user` AS kuser,
+  `user`.firstname AS userfirst,
+  `user`.lastname AS userlast,
+  `user`.fullname AS userfull
 FROM task
-	JOIN priority ON task.priority=priority.id
-	JOIN `user` ON task.`user`=`user`.id
-	JOIN `status` ON task.`status`=`status`.id;
+  JOIN priority ON task.priority=priority.id
+  JOIN `user` ON task.`user`=`user`.id
+  JOIN `status` ON task.`status`=`status`.id;
 
 /* Fill in some test data */
-INSERT INTO `user`(username, firstname) VALUES ('admin','Administrator');
+INSERT INTO `user`(username,firstname,registered) VALUES ('admin','Administrator',now());
 INSERT INTO priority(priority) VALUES ('niedrig'),('normal'),('hoch');
 INSERT INTO `status`(`status`) VALUES ('nicht begonnen'), ('in Bearbeitung'), ('erledigt'), ('wartet auf jemanden'), ('zurückgestellt');
 INSERT INTO task(`text`) VALUES ('erste Aufgabe');

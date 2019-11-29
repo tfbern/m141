@@ -19,12 +19,30 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12">
-                      <v-text-field v-model="editedItem.text" label="Bezeichung"></v-text-field>
-                      <v-text-field v-model="editedItem.startdate" label="Start"></v-text-field>
-                      <v-text-field v-model="editedItem.duedate" label="Fälligkeit"></v-text-field>
-                      <v-select :items="priorities" item-text="priority" v-model="editedItem.priority" label="Priorität"> </v-select>
-                      <v-select :items="owners" item-text="fullname" v-model="editedItem.userfull" label="Besitzer"> </v-select>
-                      <v-select :items="states" item-text="status" v-model="editedItem.status" label="Status"> </v-select>
+                      <v-text-field prepend-icon="mdi-calendar-text" v-model="editedItem.text" label="Bezeichung"></v-text-field>
+                      <v-select prepend-icon="mdi-account" :items="owners" item-text="fullname" v-model="editedItem.userfull" label="Besitzer"> </v-select>
+                      <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="datePicked" transition="scale-transition" offset-y max-width="290px" min-width="290px">
+                        <template v-slot:activator="{ on }">
+                          <v-text-field v-model="editedItem.startdate" label="Startdatum" prepend-icon="mdi-calendar-today" readonly v-on="on"></v-text-field>
+                        </template>
+                        <v-date-picker v-model="editedItem.startdate" no-title scrollable>
+                          <v-spacer></v-spacer>
+                          <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+                          <v-btn text color="primary" @click="$refs.menu.save(datePicked)">OK</v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                      <v-menu ref="menu2" v-model="menu2" :close-on-content-click="false" :return-value.sync="datePicked" transition="scale-transition" offset-y max-width="290px" min-width="290px">
+                        <template v-slot:activator="{ on }">
+                          <v-text-field v-model="editedItem.duedate" label="Fälligkeitsdatum" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
+                        </template>
+                        <v-date-picker v-model="editedItem.duedate" no-title scrollable>
+                          <v-spacer></v-spacer>
+                          <v-btn text color="primary" @click="menu2 = false">Cancel</v-btn>
+                          <v-btn text color="primary" @click="$refs.menu2.save(datePicked)">OK</v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                      <v-select prepend-icon="mdi-priority-high" :items="priorities" item-text="priority" v-model="editedItem.priority" label="Priorität"> </v-select>
+                      <v-select prepend-icon="mdi-check" :items="states" item-text="status" v-model="editedItem.status" label="Status"> </v-select>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -68,7 +86,7 @@
 <script>
 import axios from 'axios'
 export default {
-  props: ['isAuth', 'username'],
+  props: ['isAuth', 'username', 'fullname', 'role'],
   name: 'Tasks',
 
   data: () => ({
@@ -83,11 +101,14 @@ export default {
       { text: 'Actions', value: 'action', sortable: false },
     ],
     records: [],
+    menu: '',
+    menu2: '',
+    datePicked: '',
     dialog: false,
     editedIndex: -1,
     editedId: -1,
     editedItem: {},
-    defaultItem: {startdate:"2020-1-1", duedate:"2020-12-31", priority:"normal", status:"nicht begonnen"},
+    defaultItem: {},
     priorities: [],
     states: [],  
     owners: [], // array of objects with properties id, firstname, lastname and fullname
@@ -112,6 +133,13 @@ export default {
   
   methods: {
     async init () {
+      this.defaultItem = {
+        userfull:this.fullname, 
+        startdate:this.formatDate(new Date()), 
+        duedate:this.formatDate(new Date()), 
+        priority:"normal", 
+        status:"nicht begonnen"
+      },
       this.editedItem = Object.assign({}, this.defaultItem)
       this.priorities = await axios.get('/api/task/priority')
                               .then(results => results.data)
@@ -158,7 +186,7 @@ export default {
         var data = await axios.put(`/api/task/${this.editedId}`, this.editedItem)
                                 .then(results => results.data)
         if (!data.code){
-          if (this.currentUser.fullname === this.editedItem.userfull) {
+          if (this.currentUser.fullname === this.editedItem.userfull || this.role === 'admin') {
             Object.assign(this.records[this.editedIndex], this.editedItem)
           } else {
             // remove item from this view because it now belongs to a different user
@@ -169,7 +197,7 @@ export default {
       } else { // create
         this.editedItem.id = await axios.post('/api/task', this.editedItem)
                               .then(results => results.data[0])
-        if (this.currentUser.fullname === this.editedItem.userfull) {
+        if (this.currentUser.fullname === this.editedItem.userfull || this.role === 'admin') {
           this.records.push(this.editedItem)
         } else {alert('Aufgabe wurde ' + this.editedItem.userfull + ' zugewiesen.')}
       }

@@ -51,7 +51,7 @@
     <v-content>
       <v-container>
         <v-row align="center" justify="center" style="margin-top:20px;">
-          <router-view :isAuth="isAuth" :username="username"/>
+          <router-view :isAuth="isAuth" :username="username" :fullname="fullname" :role="role"/>
         </v-row>  
       </v-container>
     </v-content>

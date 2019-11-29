@@ -98,6 +98,22 @@ user.post('/user', validateRegister, async (req, res) => {
   }
 });
 
+
+// support login also via GET request
+user.use('/user/login', function (req, res, next) {
+  if (req.method === 'GET') {
+    if (req.query.username && req.query.password) {
+      req.body.username = req.query.username
+      req.body.password = req.query.password
+      req.method = 'POST'
+      next(); // forward to POST handler below
+    } else {
+      return res.json({"msg":"You must provide username and password in the query"})
+    }
+  }
+  next();
+});
+
 user.post('/user/login', async (req, res) => {
   let results = await knex('user')
                         .where('username', req.body.username)
