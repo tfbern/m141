@@ -75,7 +75,6 @@ export default {
         };
         const data = await axios.put(`/api/user/${this.id}`, credentials)
                                 .then(response => response.data);
-        console.log(data)
         this.msg = data.msg;
         this.$store.dispatch('logout');
         this.$router.push('/login');

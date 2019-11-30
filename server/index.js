@@ -31,7 +31,7 @@ app.use('/api', task);
 app.use('/api', user);
 
 // host GUI as static content
-const root = `${__dirname}/gui`
+const root = `${__dirname}/../client/dist`
 app.use('/', express.static(root))
 app.use('/js', express.static(root+ '/js'));
 app.use('/css', express.static(root + '/css'));

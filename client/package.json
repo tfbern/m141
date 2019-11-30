@@ -1,12 +1,13 @@
 {
-  "name": "todo",
-  "version": "0.1.0",
+  "name": "AufgabenmanagerGUI",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --dest ../server/gui",
-    "lint": "vue-cli-service lint",
-    "both": "vue-cli-service lint & (cd ../todo-api && nodemon)"
+    "build": "vue-cli-service build",
+    "build2": "vue-cli-service build && (cp-cli ./src/assets/favicon.ico ./dist/favicon.ico)",
+    "copy-favicon": "(cp-cli ./src/assets/favicon.ico ./dist/favicon.ico)",
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "axios": "^0.19.0",

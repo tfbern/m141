@@ -84,14 +84,18 @@ user.post('/user', validateRegister, async (req, res) => {
         });
       } else {
         // has hashed pw => add to database
-        let results = await knex('user')
-                              .insert({
-                                username: req.body.username,
-                                firstname: req.body.firstname,
-                                lastname: req.body.lastname,
-                                password: hash,
-                                registered: new Date()
-                              })
+        var newUser = {
+          username: req.body.username,
+          firstname: req.body.firstname,
+          lastname: req.body.lastname,
+          password: hash,
+          registered: new Date()
+        }
+        // Postgres 11 does not yet support generated columns
+        if (knexconf.client === 'postgres' || knexconf.client === 'pg') {
+            newUser.fullname = newUser.firstname + ' ' + newUser.lastname
+        }
+        let results = await knex('user').insert(newUser)
         res.json(results)
       }
     });
