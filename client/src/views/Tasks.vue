@@ -141,16 +141,20 @@ export default {
         status:"nicht begonnen"
       },
       this.editedItem = Object.assign({}, this.defaultItem)
+
       this.priorities = await axios.get('/api/task/priority')
                               .then(results => results.data)
+                              
       this.states = await axios.get('/api/task/state')
                               .then(results => results.data)
+
       this.owners = await axios.get('/api/user')
                               .then(results => results.data)
+
       this.currentUser = this.owners.find(data => data.username === this.username)
       if (this.currentUser !== undefined) {
         this.records = await axios.get(`/api/task/getByUser/${this.currentUser.id}`)
-                                  .then(results => results.data)
+                               .then(results => results.data)
       }
     },
     toggleItem (item) {

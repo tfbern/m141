@@ -7,8 +7,9 @@
  *              Redirect requests to routing controller
  */
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 80 // take port from environment variable if present (e.g. at heroku)
 const express = require('express')
+const fallback = require('express-history-api-fallback')
 const app = express()
 // logs requests including body to console
 // use logging if environment variable defined by nodemon.json is true
@@ -28,8 +29,23 @@ const user = require('./routes/user');
 app.use('/api', home);
 app.use('/api', task);
 app.use('/api', user);
-app.get('/', (req, res) =>{
-    res.redirect('/api')
-})
+
+// host GUI as static content
+const root = `${__dirname}/gui`
+app.use('/', express.static(root))
+app.use('/js', express.static(root+ '/js'));
+app.use('/css', express.static(root + '/css'));
+app.use(fallback('index.html', { root }))
     
-app.listen(port, console.log("Listening on port " + port))
+app.listen(port, console.log("Serving GUI at web root and API at /api on localhost port " + port))
+
+// test db connection
+const knexconf = require('./knexconf')
+const knex = require('knex')(knexconf)
+try {
+  knex.raw("SELECT VERSION();").then(
+    console.log('Sucessfully conneted to ' + knexconf.client + ' database at ' + knexconf.connection.split('@')[1])
+  )
+} catch (err) {
+  console.error(err)
+}

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --dest ../server/gui",
     "lint": "vue-cli-service lint",
     "both": "vue-cli-service lint & (cd ../todo-api && nodemon)"
   },

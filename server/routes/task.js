@@ -6,13 +6,14 @@ const knex = require('knex')(knexconf)
 const auth = require('../auth');
 
 async function getNumberOfTables() {
-  if (knexconf.client === 'pg') {
-    return await knex.raw("select * from information_schema.tables where table_schema='public'")
-                    .then(results => results.rowCount)
-  } else {
+  if (knexconf.client === 'mysql' || knexconf.client === 'mysql2') {
     return await knex.raw('SHOW TABLES')
       .then(results => results[0].length)
   }
+  else if (knexconf.client === 'postgres' || knexconf.client === 'pg') {
+    return await knex.raw("select * from information_schema.tables where table_schema='public'")
+                    .then(results => results.rowCount)
+  } 
 }
 async function getForeignKey(table, value) {
   return await knex(table)
@@ -21,10 +22,11 @@ async function getForeignKey(table, value) {
 }
 async function getEnunValues(field) {
   var results
-  if (knexconf.client === 'mysql') {
+  if (knexconf.client === 'mysql' || knexconf.client === 'mysql2') {
     results = await knex.raw(`SHOW COLUMNS FROM task LIKE "${field}"`)
     results = results[0][0].Type.replace(/enum|\(|\)|\'/g,'').split(',')
-  } else if (knexconf.client === 'pg') {
+  } 
+  else if (knexconf.client === 'postgres' || knexconf.client === 'pg') {
     results = await knex.raw(`select enum_range(null::${field})`)
     results = results.rows[0].enum_range.replace(/"|{|}|\\/g,'').split(',')
   }
