@@ -1,14 +1,16 @@
 # Database Design
 There are two supported designs: 
 ## Design with ENUM
-![Design With Enum](designWithEnum.png)
+![Design With Enum](./designWithEnum.png)
 ## Design with Tables
-![Design with Tables](designWithTablesERD.png)
+![Design with Tables](./designWithTablesERD.png)
 
 # User Registration and Login Process
-Paste the code below into the left pane of [sequencediagram.org] and see the diagram.
+![Design with Tables](./sequencediagram.png)
+## Source Code of Diagram
+Paste the code below into the left pane of [sequencediagram.org](https://sequencediagram.org) and see the diagram.
 
-```
+```js
 title Anmeldeverfahren
 
 participant User
@@ -46,4 +48,3 @@ User->GUI: Benutzer meldet sich ab.
 GUI->GUI: Das Token wird im Browser Store gelöscht und in Axios gelöscht
 end
 ```
-[sequencediagram.org]: https://sequencediagram.org
