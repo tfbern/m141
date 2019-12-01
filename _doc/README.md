@@ -5,7 +5,7 @@ The according SQL DDL statements are provided for MySQL and PostgreSQL.
 * [PostgreSQL](designWithEnumPostgresDDL.sql)
 * [MySQL with lookup tables](designWithTablesDDL.sql)
 
-## Design using ENUM Data Type
+## Design using Columns with ENUM Data Type
 ![Design With Enum](./designWithEnum.png)
 ## Design using Lookup Tables
 ![Design with Tables](./designWithTablesERD.png)
