@@ -1,5 +1,5 @@
 # Database Design
-There are two supported data models both including the two base tables *user* and *task* and a JOIN view. While the first design uses some ENUM colums, the the second one uses 2 additional lookup tables.  
+There are two supported data models both including the two base tables *user* and *task* and also a JOIN view. While the first design uses some ENUM colums for priority and status, the the second model one uses two additional lookup tables to achieve the same functionality.  
 The according SQL DDL statements are provided for MySQL and PostgreSQL.
 * [MySQL with 2 tables](designWithEnumDDL.sql)
 * [PostgreSQL with 2 tables](designWithEnumPostgresDDL.sql)
