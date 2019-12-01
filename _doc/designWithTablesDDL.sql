@@ -26,7 +26,6 @@ CREATE TABLE IF NOT EXISTS `status` (
 CREATE TABLE IF NOT EXISTS `task` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `text` VARCHAR(255) NOT NULL,
-  `done` TINYINT NOT NULL DEFAULT '0',
   `startdate` DATE NULL DEFAULT (curdate()),
   `duedate` DATE NULL DEFAULT NULL,
   `priority` INT NOT NULL DEFAULT '2',
@@ -38,13 +37,19 @@ CREATE TABLE IF NOT EXISTS `task` (
   INDEX `user_idx` (`user` ASC) VISIBLE,
   CONSTRAINT `user`
     FOREIGN KEY (`user`)
-    REFERENCES `user` (`id`),
+    REFERENCES `user` (`id`)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT,
   CONSTRAINT `priority`
     FOREIGN KEY (`priority`)
     REFERENCES `priority` (`id`),
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT,
   CONSTRAINT `status`
     FOREIGN KEY (`status`)
-    REFERENCES `status` (`id`));
+    REFERENCES `status` (`id`)
+    ON DELETE RESTRICT
+    ON UPDATE RESTRICT);
     
 CREATE VIEW tasks AS
 SELECT task.id, 

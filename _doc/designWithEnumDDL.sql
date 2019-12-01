@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   
  CREATE TABLE IF NOT EXISTS `task` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `text` VARCHAR(45) NOT NULL,
+  `text` VARCHAR(255) NOT NULL,
   `startdate` DATE NULL DEFAULT (curdate()),
   `duedate` DATE NULL DEFAULT NULL,
   `priority` ENUM('niedrig', 'normal', 'hoch') NOT NULL DEFAULT 'normal',

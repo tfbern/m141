@@ -26,9 +26,11 @@ app.use(express.json())
 const home = require('./routes/home');
 const task = require('./routes/task');
 const user = require('./routes/user');
+const system = require('./routes/system');
 app.use('/api', home);
 app.use('/api', task);
 app.use('/api', user);
+app.use('/api', system);
 
 // host GUI as static content
 const root = `${__dirname}/../client/dist`

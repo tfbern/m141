@@ -3,32 +3,51 @@ const express = require('express');
 const task = express.Router();
 const knexconf = require('../knexconf')
 const knex = require('knex')(knexconf)
-const auth = require('../auth');
+const auth = require('../auth')
+const lookupTables = ['priority', 'status']
+var dbType = knexconf.client;
+dbType = (dbType === 'pg') ? 'postgres' : dbType
+dbType = (dbType === 'mysql2') ? 'mysql' : dbType
 
-async function getNumberOfTables() {
-  if (knexconf.client === 'mysql' || knexconf.client === 'mysql2') {
-    return await knex.raw('SHOW TABLES')
-      .then(results => results[0].length)
+// check database design: enum or lookup tables
+async function getDesign() {
+  var tables = []
+  if (dbType === 'mysql') {
+    var results = await knex.raw('SHOW TABLES')
+    results[0].forEach(obj => 
+      tables.push(Object.values(obj)[0])
+    )
+  } else if (dbType === 'postgres') {
+    var results = await knex.raw("select * from information_schema.tables where table_schema='public'")
+    tables = [results.rows.map(element => element.table_name)]
+  } else {
+      console.error('Unsupported database ' + dbType)
+      return
   }
-  else if (knexconf.client === 'postgres' || knexconf.client === 'pg') {
-    return await knex.raw("select * from information_schema.tables where table_schema='public'")
-                    .then(results => results.rowCount)
-  } 
+  var hasLookupTables = (tables.indexOf(lookupTables[0]) > -1 && tables.indexOf(lookupTables[1]) > -1)
+  return (hasLookupTables) ? 'lookup' : 'enum'
 }
+
+// get foreign key of a certain status or priority
 async function getForeignKey(table, value) {
   return await knex(table)
     .where(table, value)
     .then(data => data[0].id)
 }
+
+// get values of columns with data type ENUM
 async function getEnunValues(field) {
   var results
-  if (knexconf.client === 'mysql' || knexconf.client === 'mysql2') {
+  if (dbType === 'mysql') {
     results = await knex.raw(`SHOW COLUMNS FROM task LIKE "${field}"`)
     results = results[0][0].Type.replace(/enum|\(|\)|\'/g,'').split(',')
   } 
-  else if (knexconf.client === 'postgres' || knexconf.client === 'pg') {
+  else if (dbType === 'postgres') {
     results = await knex.raw(`select enum_range(null::${field})`)
     results = results.rows[0].enum_range.replace(/"|{|}|\\/g,'').split(',')
+  } else {
+      console.error('Unsupported database ' + dbType)
+      return
   }
   return results.map((element,index) => {
     var obj = {}
@@ -67,7 +86,7 @@ task.post('/task', auth.isLoggedIn, async (req, res) =>{
   var user = req.body.kuser
   var priority = req.body.priority
   var status = req.body.status
-  if (await getNumberOfTables() > 3) {
+  if (await getDesign() == 'lookup') {
     priority = await getForeignKey('priority', req.body.priority)
     status = await getForeignKey('status', req.body.status)
   }
@@ -88,7 +107,7 @@ task.put('/task/:id', auth.isLoggedIn, async (req, res) =>{
   var user = req.body.kuser
   var priority = req.body.priority
   var status = req.body.status
-  if (await getNumberOfTables() > 3) {
+  if (await getDesign() == 'lookup') {
     priority = await getForeignKey('priority', req.body.priority)
     status = await getForeignKey('status', req.body.status)
   }
@@ -111,24 +130,24 @@ task.delete('/task/:id', auth.isLoggedIn, async (req, res) =>{
 })
 
 // read the priorities
-task.get('/task/priority', auth.isLoggedIn, async (req, res) =>{
+task.get('/task/priority', async (req, res) =>{
   var results 
-  var n = await getNumberOfTables()
-  if (n === 3) { // design with 2 tables and 1 view
+  var design = await getDesign()
+  if (design === 'enum') { // design with 2 tables and 1 view
     results = await getEnunValues('priority')
-  } else if (n > 3) {
+  } else if (design === 'lookup') {
     results = await knex('priority')
   }
   res.json(results)
 })
 
 // read the states
-task.get('/task/state', auth.isLoggedIn, async (req, res) =>{
+task.get('/task/state', async (req, res) =>{
   var results 
-  var n = await getNumberOfTables()
-  if (n === 3) { // design with 2 tables and 1 view
+  var design = await getDesign()
+  if (design === 'enum') {
     results = await getEnunValues('status')
-  } else if (n > 3) {
+  } else if (design === 'lookup') {
     results = await knex('status')
   }
   res.json(results)

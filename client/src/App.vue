@@ -23,7 +23,8 @@
         <div id="nav" style="margin-top:12px">
           <router-link class="router-link" to="/">Home</router-link><span v-if="isAuth"> | </span>
           <router-link class="router-link" v-if="isAuth" to="/tasks">Tasks</router-link><span v-if="isAuth && role === 'admin'"> | </span>
-          <router-link class="router-link" v-if="isAuth && role === 'admin'" to="/users">Users</router-link>
+          <router-link class="router-link" v-if="isAuth && role === 'admin'" to="/users">Users</router-link><span v-if="isAuth && role === 'admin'"> | </span>
+          <router-link class="router-link" v-if="isAuth && role === 'admin'" to="/system">System</router-link>
         </div>
         </v-col>
         <v-col align="right" justify="right">
