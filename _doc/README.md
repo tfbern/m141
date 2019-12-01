@@ -1,5 +1,6 @@
 # Database Design
-There are two supported designs: the first one with two tables and the second one with 4 tables. Both design include a join view. The SQL DDL code is provided for MySQL. Furthermore there is a version available for PostgreSQL in order to host it on Heroku.
+There are two supported data models both including the two base tables *user* and *task* and a JOIN view. While the first design uses some ENUM colums, the the second one uses 2 additional lookup tables.  
+The according SQL DDL statements are provided for MySQL and PostgreSQL.
 * [MySQL with 2 tables](designWithEnumDDL.sql)
 * [PostgreSQL with 2 tables](designWithEnumPostgresDDL.sql)
 * [MySQL with 4 tables](designWithTablesDDL.sql)
