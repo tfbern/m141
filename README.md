@@ -3,7 +3,7 @@ This is a demo app. It has been developed during ICT module 141 at <a href="http
 
 ## Database
 The database can be either relational database supported by knex. We have tested MySQL and PostgreSQL.
-The data model mainly consits of the two entities *user* and *task*. To setup such a database, the [SQL DDL statements](_doc) are provided. There are two supported designs: one with [2 tables and 1 view](_doc/designWithEnum.png) and another with [4 tables and one view](_doc/designWithTablesERD.png).
+The data model mainly consits of the two entities *user* and *task*. To setup such a database, the [SQL DDL statements](_doc) are provided. There are two supported designs: one making use of [columns with the ENUM data type](_doc/designWithEnum.png) and another using [lookup tables](_doc/designWithTablesERD.png).
 
 ## Application Programming Interface (API)
 There is a [REST API](server) that provides access to the database via HTTP/JSON for the application.
