@@ -8,6 +8,16 @@
       </v-toolbar>
       <v-card-text>
         <v-form>
+          <v-select prepend-icon="mdi-database" :items="loginMethods" v-model="loginMethod" label="Login Methode" @change="changeMethod"></v-select>
+          <v-text-field
+            v-show="showLdapServer"
+            v-model="ldapServer"
+            id="ldapServer"
+            label="LDAP Server"
+            name="ldapServer"
+            prepend-icon="mdi-server"
+            type="text"
+          ></v-text-field>
           <v-text-field
             v-model="username"
             label="Username"
@@ -15,7 +25,6 @@
             prepend-icon="mdi-account"
             type="text"
           ></v-text-field>
-
           <v-text-field
             v-model="password"
             id="password"
@@ -41,6 +50,10 @@ export default {
   props: ['isAuth'],
   data() {
     return {
+      loginMethods: ['Eigene Datenbank', 'LDAP Server'],
+      loginMethod: 'Eigene Datenbank',
+      showLdapServer: false,
+      ldapServer: '',
       username: '',
       password: '',
       msg: '',
@@ -48,12 +61,17 @@ export default {
   },
   methods: {
     async login() {
+      var loginEndpoint = 'login'
+      var postBody = {
+        username: this.username,
+        password: this.password
+      };
+      if (this.loginMethod === 'LDAP Server') {
+        postBody.ldapServer = this.ldapServer
+        loginEndpoint = 'ldaplogin'
+      }
       try {
-        const credentials = {
-          username: this.username,
-          password: this.password
-        };
-        const data = await axios.post('/api/user/login', credentials)
+        const data = await axios.post('/api/user/'+loginEndpoint, postBody)
                                 .then(response => response.data);
         this.msg = data.msg;
         const token = data.token;
@@ -64,6 +82,9 @@ export default {
         this.msg = 'Username or password is incorrect';
       }
     },
+    changeMethod(value) {
+      this.showLdapServer = (value === 'Eigene Datenbank') ? false : true
+    }
   }
 };
 </script>

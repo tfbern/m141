@@ -3,9 +3,11 @@ const express = require('express')
 const user = express.Router()
 const knexconf = require('../knexconf')
 const knex = require('knex')(knexconf)
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const auth = require('../auth');
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const auth = require('../auth')
+const ldap = require('ldapjs') 
+const jwtSecret = "SECRETKEY"
 
 // read user
 user.get('/user', auth.isLoggedIn, async (req, res) =>{
@@ -136,13 +138,11 @@ user.post('/user/login', async (req, res) => {
         });
       }
       if (bResult) {
-        const token = jwt.sign({
-            username: user.username,
-            userId: user.id
-          },
-          'SECRETKEY', {expiresIn: '1d'}
+        const token = jwt.sign(
+          {username: user.username, userId: user.id},
+          jwtSecret, 
+          {expiresIn: '1d'}
         );
-
         let results = await knex('user')
                               .update({
                                 lastlogin: new Date()})
@@ -160,4 +160,26 @@ user.post('/user/login', async (req, res) => {
     });
   }
 });
-module.exports = user;
+
+user.post('/user/ldaplogin', async (req, res) => {
+  const distinguishedName = req.body.username
+  const password = req.body.password
+  const ldapServer = req.body.ldapServer
+  const ldapServerURL = 'ldap://' + ldapServer
+  const ldapClient = await ldap.createClient({ url: ldapServerURL }) 
+  // console.log(ldapServerURL, distinguishedName)
+  ldapClient.bind(distinguishedName, password, function(err) { 
+    if (!err) {
+      const token = jwt.sign(
+        {username: distinguishedName, userId: distinguishedName},
+        jwtSecret,
+        {expiresIn: '1d'}
+      );
+    return res.status(200).send({msg: 'Logged in!', token, user});
+    } else {
+      console.log(err) 
+      return res.status(401).send({msg: 'Username or password is incorrect!'});
+    }
+  })
+})
+module.exports = user
