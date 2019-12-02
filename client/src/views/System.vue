@@ -1,6 +1,7 @@
 <template>
   <v-flex>
     <h2>System</h2>
+    <h3>Webserver</h3>
     <v-simple-table>
       <template v-slot:default>
         <thead>
@@ -10,14 +11,27 @@
           </tr>
         </thead>
         <tbody>
-            <tr><td>Server Betriebssystem:</td><td>{{ server.serverEnv.OS }}</td></tr>
-            <tr><td>Server Computername:</td><td>{{ server.serverEnv.COMPUTERNAME }}</td></tr>
-            <tr><td>Server Prozessor:</td><td>{{server.serverEnv.PROCESSOR_IDENTIFIER }}</td></tr>
-            <tr><td>Datenbank Engine:</td><td>{{ server.knexconf.client }}</td></tr>
-            <tr><td>Datenbank:</td><td>{{ server.knexconf.connection.split('@')[1].split('/')[1]}}</td></tr>
-            <tr><td>Datenbank-URL:</td><td>{{ server.knexconf.connection }}</td></tr>
-            <tr><td>Server Umgebungsvariable PORT:</td><td>{{ server.serverEnv.PORT }}</td></tr>
-            <tr><td>Server Umgebungsvariable DATABASE_URL:</td><td>{{ server.serverEnv.DATABASE_URL }}</td></tr>
+            <tr><td>Hostname / Uptime:</td><td>{{ hostname }} / {{ (uptime/3600).toFixed(2) }} Stunden</td></tr>
+            <tr><td>Anzahl CPUs x Typ:</td><td>{{ numberOfCpus }} x {{ cpu }}</td></tr>
+            <tr><td>OS Typ / Plattform / RAM</td><td>{{ osType }} / {{ platform }} / {{ totalmem / 1000000000 + ' GB' }}</td></tr>
+            <tr v-for="(item, index) in Object.keys(networkInterfaces)" v-bind:key="index"><td>{{item}}:</td><td>{{ networkInterfaces[item][1] }}</td></tr>
+            <tr><td>Server Umgebungsvariable PORT:</td><td>{{ serverEnvPort  }}</td></tr>
+        </tbody>
+      </template>
+    </v-simple-table>
+    <h3>Datenbank-Server</h3>
+    <v-simple-table>
+      <template v-slot:default>
+        <thead>
+          <tr>
+            <th class="text-left">Bezeichnung</th>
+            <th class="text-left">Wert</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr><td>Datenbank Engine:</td><td>{{ dbEngine }}</td></tr>
+            <tr><td>Datenbank:</td><td>{{ database }}</td></tr>
+            <tr><td>Datenbank-URL:</td><td>{{ databaseURL }}</td></tr>
         </tbody>
       </template>
     </v-simple-table>
@@ -29,32 +43,40 @@ export default {
   props: ['isAuth', 'username'],
   data() {
     return {
-      server: ''
+      system: '',
+      dbEngine: '',
+      database: '',
+      databaseURL: '',
+      serverEnvPort: '',
+      hostname: '',
+      cpu: '',
+      numberOfCpus: '',
+      totalmem: '',
+      osType: '',
+      platform: '',
+      uptime: '',
+      networkInterfaces: ''
     };
   },
   created() {
     this.init()
-    this.token = this.$store.getters.isLoggedIn
-    if (this.token) {
-      this.id = this.$store.getters.getUser.id;
-      this.name = this.$store.getters.getUser.fullname;
-      this.role = this.$store.getters.getUser.role;
-    }
-
   },
   methods: {
     async init() {
-      this.server = await axios.get('/api/system')
+      this.system = await axios.get('/api/system')
                         .then(res => res.data)
-      console.log('ddfs')
-    },
-    formatDate(dateString) {
-      if (dateString) {
-        var d = new Date(dateString)
-        return d.toLocaleString();
-      } else {
-        return null
-      }
+      this.dbEngine = this.system.knexconf.client
+      this.database = this.system.knexconf.connection.split('@')[1].split('/')[1]
+      this.databaseURL = this.system.knexconf.connection
+      this.serverEnvPort = this.system.serverEnv.PORT     
+      this.hostname = this.system.hostname   
+      this.cpu = this.system.cpus[0].model
+      this.numberOfCpus = this.system.cpus.length
+      this.totalmem = this.system.totalmem
+      this.osType = this.system.osType
+      this.platform = this.system.platform
+      this.uptime = this.system.uptime
+      this.networkInterfaces = this.system.networkInterfaces
     }
   }
 };
