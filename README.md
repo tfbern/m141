@@ -12,7 +12,7 @@ There is a [REST API](server) that provides access to the database via HTTP/JSON
 There is a [grafical user interface](client) programmed with vue.js that uses the API.
 
 # Development
-To start the Server/API change to [server](server) and run ```nodemon```. This will start the API and also serve static content in the [client/dist](client/dist) folder, if available. This folder contains the latest build of the GUI.
+To start the API and server change to [server](server) and run ```nodemon```. This will start the API and also serve static content in the [client/dist](client/dist) folder, if available. This folder contains the latest build of the GUI.
 
 For GUI development start the development server by changing to [client](client) folder and running ```npm run serve```.
 You can build the GUI by running ```npm run build```.
