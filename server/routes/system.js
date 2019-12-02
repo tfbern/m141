@@ -4,11 +4,22 @@ const router = express.Router();
 const knexconf = require('../knexconf')
 const knex = require('knex')(knexconf)
 const auth = require('../auth')
+const os = require('os');
 
 // read the states
 router.get('/system', auth.isLoggedIn, async (req, res) =>{
-  var results = 'OS'
-  res.json({serverEnv:process.env,knexconf})
+  system = {}
+  system.serverEnv = process.env
+  system.knexconf = knexconf
+  system.hostname = os.hostname();
+  system.cpus = os.cpus()
+  system.totalmem = os.totalmem()
+  system.osType = os.type()
+  system.platform = os.platform()
+  system.uptime = os.uptime()
+  system.networkInterfaces = os.networkInterfaces()
+
+  res.json(system)
 })
 
 module.exports = router;
