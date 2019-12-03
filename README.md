@@ -17,6 +17,9 @@ To start the API and server change to [server](server) and run ```nodemon```. Th
 For GUI development start the development server by changing to [client](client) folder and running ```npm run serve```.
 You can build the GUI by running ```npm run build```.
 
+# Production
+After building the GUI by running ```npm run build```, you can serve the whole application (API and GUI) together on a single web server. Just run ```npm start``` or ```nodemon``` from the root directory of this project.
+
 # Hosting
 The application can be hosted locally, at <a href="http://www.heroku.com" target="_blank">Heroku</a> or any other host that supports node.js.
 
