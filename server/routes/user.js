@@ -167,15 +167,21 @@ user.post('/user/ldaplogin', async (req, res) => {
   const ldapServer = req.body.ldapServer
   const ldapServerURL = 'ldap://' + ldapServer
   const ldapClient = await ldap.createClient({ url: ldapServerURL }) 
-  // console.log(ldapServerURL, distinguishedName)
   ldapClient.bind(distinguishedName, password, function(err) { 
     if (!err) {
+      var user = {}
+      user.username = user.fullname = distinguishedName.split('=')[1].split(',')[0]
+      user.id = distinguishedName
+      user.role = 'LDAP'
       const token = jwt.sign(
-        {username: distinguishedName, userId: distinguishedName},
+        {username: user.username, userId: user.id},
         jwtSecret,
         {expiresIn: '1d'}
       );
-    return res.status(200).send({msg: 'Logged in!', token, user});
+      ldapClient.unbind(function(err) {
+        err ? console.log(err) : ''
+      });
+      return res.status(200).send({msg: 'Logged in!', token, user});
     } else {
       console.log(err) 
       return res.status(401).send({msg: 'Username or password is incorrect!'});

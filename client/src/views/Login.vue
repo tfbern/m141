@@ -53,7 +53,7 @@ export default {
       loginMethods: ['Eigene Datenbank', 'LDAP Server'],
       loginMethod: 'Eigene Datenbank',
       showLdapServer: false,
-      ldapServer: '',
+      ldapServer: 'ldap.forumsys.com',
       username: '',
       password: '',
       msg: '',
@@ -67,8 +67,14 @@ export default {
         password: this.password
       };
       if (this.loginMethod === 'LDAP Server') {
-        postBody.ldapServer = this.ldapServer
-        loginEndpoint = 'ldaplogin'
+        if (this.validateUrl(this.ldapServer)) {
+          this.msg = 'LDAP server is valid...';
+          postBody.ldapServer = this.ldapServer
+          loginEndpoint = 'ldaplogin'
+        } else {
+          this.msg = 'LDAP server is not valid';
+          return
+        }
       }
       try {
         const data = await axios.post('/api/user/'+loginEndpoint, postBody)
@@ -83,7 +89,21 @@ export default {
       }
     },
     changeMethod(value) {
-      this.showLdapServer = (value === 'Eigene Datenbank') ? false : true
+      this.showLdapServer = false
+      this.username = this.password = ''
+      // https://www.forumsys.com/tutorials/integration-how-to/ldap/online-ldap-test-server/
+      if (value === 'LDAP Server') {
+        this.showLdapServer = true
+        this.username = 'cn=read-only-admin,dc=example,dc=com'
+        this.password = 'password'
+      }
+    }, 
+    validateUrl (str) {
+      var pattFQDN = /^(?=.{1,254}$)((?=[a-z0-9-]{1,63}\.)(xn--+)?[a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,63}$/i
+      var pattIP = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/
+      var isFQDN = pattFQDN.test(str);
+      var isIP = pattIP.test(str);
+      return (isFQDN | isIP) ? true : false
     }
   }
 };

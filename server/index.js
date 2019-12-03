@@ -49,3 +49,7 @@ knex.raw("SELECT VERSION();").then(function(res){
 }).catch(function(err) {
   console.error(err.stack);
 })
+
+process.on('uncaughtException', function (err) {
+  console.error('Caught exception: ' + err);
+});

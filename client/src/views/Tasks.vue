@@ -152,6 +152,7 @@ export default {
                               .then(results => results.data)
 
       this.currentUser = this.owners.find(data => data.username === this.username)
+      if (this.role === 'LDAP') this.currentUser = 'LDAP' // hack: avoid crash for LDAP users when creating task
       if (this.currentUser !== undefined) {
         this.records = await axios.get(`/api/task/getByUser/${this.currentUser.id}`)
                                .then(results => results.data)

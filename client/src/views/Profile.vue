@@ -15,13 +15,13 @@
             <tr><td>Name:</td><td colspan=2>{{ name }}</td></tr>
             <tr><td>Rolle:</td><td colspan=2>{{ role }}</td></tr>
             <tr><td>Benutzer ID:</td><td colspan=2>{{ id }}</td></tr>
-            <tr><td>Passwort Hash:</td><td>{{ password }}</td><td><router-link to="/passwd">Passwort ändern</router-link></td></tr>
+            <tr><td>Passwort Hash:</td><td>{{ password }}</td><td><router-link v-if="role!=='LDAP'" to="/passwd">Passwort ändern</router-link></td></tr>
             <tr><td>Registriert:</td><td colspan=2>{{ formatDate(registered) }}</td></tr>
             <tr><td>Letztes Login:</td><td colspan=2>{{ formatDate(lastlogin) }}</td></tr>
             <tr><td>Token Header:</td><td colspan=2>{{ tokenHeader }}</td></tr>
             <tr><td>Token Payload:</td><td colspan=2>{{ tokenPayload }}</td></tr>
             <tr><td>Token Signature:</td><td colspan=2>{{ tokenSignature }}</td></tr>
-            <tr><td>Token:</td><td colspan=2><textarea readonly disabled style="resize: none;" rows=2 cols=100 v-model="token"></textarea></td></tr>
+            <tr><td>Token:</td><td colspan=2><textarea readonly disabled style="resize: none;" rows=3 cols=100 v-model="token"></textarea></td></tr>
             <tr><td>Signature Verificaion:</td><td v-bind:style="style()" colspan=2>{{ signature }}</td></tr>
         </tbody>
       </template>
