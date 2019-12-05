@@ -8,9 +8,9 @@ module.exports = {
       req.userData = decoded;
       next();
     } catch (err) {
-        return res.status(401).send({
-        msg: 'Your session is not valid!'
-        });
+      return res.status(401).send({
+      msg: 'Your session is not valid!'
+      });
     }
   } 
 }

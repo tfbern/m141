@@ -1,6 +1,6 @@
 {
-  "name": "AufgabenmanagerServer",
-  "description": "Aufgabenmanager Server including GUI as static content",
+  "name": "aufgabenmanager",
+  "description": "Aufgabenmanager server including GUI as static content",
   "version": "1.0.0",
   "author": "Samuel Hess",
   "license": "ISC",
@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/tfbern/m141.git"
   },
-  "main": "index.js",
+  "main": "./server/index.js",
   "scripts": {
     "start": "node ./server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"

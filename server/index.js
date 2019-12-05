@@ -2,17 +2,23 @@
  * Author:      Samuel Hess
  * File name:   index.js
  * Version:     1.0
- * Description: The main file of the REST API
- *              Initialize express and other dependencies
- *              Redirect requests to routing controller
+ * Description: main file of the server / API
+ *              initialize express and other dependencies
+ *              redirect requests to routing controllers
+ *              serve GUI as static content
+ *              test datbase connection
+ *              catch uncaught exceptions
  */
 
-const port = process.env.PORT || 80 // take port from environment variable if present (e.g. at heroku)
+ // take port from environment variable if present (e.g. at heroku)
+const port = process.env.PORT || 80 
 const express = require('express')
-const fallback = require('express-history-api-fallback')
 const app = express()
-// logs requests including body to console
-// use logging if environment variable defined by nodemon.json is true
+const fallback = require('express-history-api-fallback')
+
+// enable or disable server logging
+// logs requests to console including their body 
+// logging will be enabled if an environment variable nodemon_logging (defined by nodemon.json) exists
 const logging = process.env.nodemon_logging || false
 if (logging){
   var morgan = require('morgan') 
@@ -20,25 +26,22 @@ if (logging){
   app.use(morgan(':method :url :body :status'))
 }
 
+// use express built-in JSON body parser
+// note: multipart/form-data will not be parsed
 app.use(express.json())
 
-// add routes
-const home = require('./routes/home');
-const task = require('./routes/task');
-const user = require('./routes/user');
-const system = require('./routes/system');
-app.use('/api', home);
-app.use('/api', task);
-app.use('/api', user);
-app.use('/api', system);
+// add home, task, user and system routes
+app.use('/api', require('./routes/home'));
+app.use('/api', require('./routes/task'));
+app.use('/api', require('./routes/user'));
+app.use('/api', require('./routes/system'));
 
 // host GUI as static content
 const root = `${__dirname}/../client/dist`
-app.use('/', express.static(root))
-app.use('/js', express.static(root+ '/js'));
-app.use('/css', express.static(root + '/css'));
+app.use(express.static(root))
 app.use(fallback('index.html', { root }))
-    
+
+// start server
 app.listen(port, console.log("Serving GUI at web root and API at /api on localhost port " + port))
 
 // test db connection
@@ -50,6 +53,7 @@ knex.raw("SELECT VERSION();").then(function(res){
   console.error(err.stack);
 })
 
+// catch so far uncaught exceptions
 process.on('uncaughtException', function (err) {
   console.error('Caught exception: ' + err);
 });

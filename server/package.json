@@ -1,5 +1,5 @@
 {
-  "name": "AufgabenmanagerServer",
+  "name": "aufgabenmanager-server",
   "description": "REST API with knex for AufgabenmanagerGUI",
   "version": "1.0.0",
   "author": "Samuel Hess",
