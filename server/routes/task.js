@@ -3,7 +3,7 @@ const express = require('express');
 const task = express.Router();
 const knexconf = require('../knexconf')
 const knex = require('knex')(knexconf)
-const auth = require('../auth')
+const auth = require('../middleware/auth')
 const lookupTables = ['priority', 'status']
 var dbType = knexconf.client;
 dbType = (dbType === 'pg') ? 'postgres' : dbType

@@ -5,7 +5,7 @@ const knexconf = require('../knexconf')
 const knex = require('knex')(knexconf)
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const auth = require('../auth')
+const auth = require('../middleware/auth')
 const ldap = require('ldapjs') 
 const jwtSecret = "SECRETKEY"
 

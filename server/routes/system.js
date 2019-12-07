@@ -2,12 +2,11 @@
 const express = require('express');
 const router = express.Router();
 const knexconf = require('../knexconf')
-const knex = require('knex')(knexconf)
-const auth = require('../auth')
+const auth = require('..//middleware/auth')
 const os = require('os');
 
 // read the states
-router.get('/system', auth.isLoggedIn, async (req, res) =>{
+router.get('/system', auth.isLoggedIn, (req, res) =>{
   system = {}
   system.serverEnv = process.env
   system.knexconf = knexconf
