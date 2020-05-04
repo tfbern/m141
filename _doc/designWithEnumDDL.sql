@@ -44,8 +44,8 @@ FROM `task`
 	JOIN `user` ON `task`.`user`=`user`.`id`;
 
 /* Fill in some test users and tasks. 
-   However, an encyrpted password cannot be set. 
-   Use the API/GUI with bcrypt to set the encyrpted password  
+   However, an encrypted password cannot be set. 
+   Use the API/GUI with bcrypt to set the encrypted password  
 */
 INSERT INTO `user`(firstname,lastname,username,registered) 
   VALUES ('Peter', 'Müller','peter@mueller',now());
